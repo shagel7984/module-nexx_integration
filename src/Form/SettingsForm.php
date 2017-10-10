@@ -28,13 +28,6 @@ class SettingsForm extends ConfigFormBase {
   protected $entityManager;
 
   /**
-   * The display plugin manager.
-   *
-   * @var \Drupal\entity_embed\EntityEmbedDisplay\EntityEmbedDisplayManager
-   */
-  protected $displayPluginManager;
-
-  /**
    * {@inheritdoc}
    *
    * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory

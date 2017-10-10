@@ -7,8 +7,8 @@ use Drupal\Core\Entity\EntityFieldManagerInterface;
 use Drupal\Core\Entity\EntityTypeBundleInfoInterface;
 use Drupal\Core\Database\Connection;
 use Drupal\Core\Utility\Token;
-use Drupal\media_entity\MediaInterface;
-use Drupal\media_entity\Entity\Media;
+use Drupal\media\MediaInterface;
+use Drupal\media\Entity\Media;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -38,7 +38,7 @@ class OmniaController extends ControllerBase {
   /**
    * The media entity.
    *
-   * @var \Drupal\media_entity\MediaInterface
+   * @var \Drupal\media\MediaInterface
    */
   protected $mediaEntity;
 
@@ -239,7 +239,7 @@ class OmniaController extends ControllerBase {
    * @param int|null $id
    *   Media entity id or NULL to create new one.
    *
-   * @return \Drupal\Core\Entity\EntityInterface|\Drupal\media_entity\MediaInterface|null
+   * @return \Drupal\Core\Entity\EntityInterface|\Drupal\media\MediaInterface|null
    *   Media entity or NULL if no matching entity is found.
    */
   protected function mediaEntity($id = NULL) {
@@ -260,19 +260,19 @@ class OmniaController extends ControllerBase {
   /**
    * Set proper publish state to media entity.
    *
-   * @param \Drupal\media_entity\MediaInterface $media
+   * @param \Drupal\media\MediaInterface $media
    *   Media entity.
    * @param object $videoData
    *   Incoming VideoData object from Nexx.tv.
    */
   protected function setState(MediaInterface $media, $videoData) {
 
-    $status = Media::NOT_PUBLISHED;
+    $status = FALSE;
 
     if ($videoData->itemStates->active == 1
       && $videoData->itemStates->isSSC == 1
     ) {
-      $status = Media::PUBLISHED;
+      $status = TRUE;
 
       $this->logger->info('Published video "@title" (Drupal id: @id)',
         [
@@ -304,7 +304,7 @@ class OmniaController extends ControllerBase {
   /**
    * Map incoming nexx video data to media entity fields.
    *
-   * @param \Drupal\media_entity\MediaInterface $media
+   * @param \Drupal\media\MediaInterface $media
    *   Media entity.
    * @param object $videoData
    *   Incomming videoData object from Nexx.tv.
@@ -356,7 +356,7 @@ class OmniaController extends ControllerBase {
     // Copy title to label field.
     $media->$labelKey = $title;
 
-    $media_config = $media->getType()->getConfiguration();
+    $media_config = $media->getSource()->getConfiguration();
 
     if (!empty($media_config['channel_field'])) {
       $channelField = $media_config['channel_field'];
@@ -420,8 +420,10 @@ class OmniaController extends ControllerBase {
     }
 
     // Media entity does not update mapped fields by itself.
-    foreach ($media->bundle->entity->field_map as $source_field => $destination_field) {
-      if ($media->hasField($destination_field) && ($value = $media->getType()->getField($media, $source_field))) {
+    /** @var \Drupal\media\MediaTypeInterface $type */
+    $type = $media->bundle->entity;
+    foreach ($type->getFieldMap() as $source_field => $destination_field) {
+      if ($media->hasField($destination_field) && ($value = $media->getSource()->getMetadata($media, $source_field))) {
         $media->set($destination_field, $value);
       }
     }
@@ -483,7 +485,7 @@ class OmniaController extends ControllerBase {
   /**
    * Map incoming teaser image to medie entity field.
    *
-   * @param \Drupal\media_entity\MediaInterface $media
+   * @param \Drupal\media\MediaInterface $media
    *   The media entity.
    * @param string $teaserImageField
    *   The machine name of the field, that stores the file.
@@ -518,7 +520,7 @@ class OmniaController extends ControllerBase {
 
     if ($thumb_uri = $videoData->itemData->thumb) {
       // Get configured source field from media entity type definition.
-      $thumbnail_upload_field = $thumbnail_entity->getType()
+      $thumbnail_upload_field = $thumbnail_entity->getSource()
         ->getConfiguration()['source_field'];
       // Get field settings from this field.
       $thumbnail_upload_field_settings = $thumbnail_entity->getFieldDefinition($thumbnail_upload_field)

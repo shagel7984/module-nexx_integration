@@ -385,7 +385,7 @@ class NexxIntegrationVideoTest extends BrowserTestBase {
       ],
     ]);
 
-    $responseBody = \GuzzleHttp\json_decode($response->getBody()->getContents());
+    $responseBody = \GuzzleHttp\json_decode($response->getBody());
     return $responseBody;
   }
 
@@ -395,14 +395,14 @@ class NexxIntegrationVideoTest extends BrowserTestBase {
    * @param int $videoId
    *   The entity ID.
    *
-   * @return EntityInterface
+   * @return \Drupal\Core\Entity\EntityInterface
    *   The video entity.
    */
   protected function loadVideoEntity($videoId) {
-    /** @var EntityTypeManager $entityTypeManager */
+    /** @var \Drupal\Core\Entity\EntityTypeManagerInterface $entityTypeManager */
     $entityTypeManager = $this->container->get('entity_type.manager');
 
-    /** @var EntityStorageInterface $mediaStorage */
+    /** @var \Drupal\Core\Entity\EntityStorageInterface $mediaStorage */
     $mediaStorage = $entityTypeManager->getStorage('media');
     $mediaStorage->resetCache([$videoId]);
     return $mediaStorage->load($videoId);
@@ -415,10 +415,10 @@ class NexxIntegrationVideoTest extends BrowserTestBase {
    *   Number of videos.
    */
   protected function countVideos() {
-    /** @var EntityTypeManager $entityTypeManager */
+    /** @var \Drupal\Core\Entity\EntityTypeManagerInterface $entityTypeManager */
     $entityTypeManager = $this->container->get('entity_type.manager');
 
-    /** @var EntityStorageInterface $mediaStorage */
+    /** @var \Drupal\Core\Entity\EntityStorageInterface $mediaStorage */
     $mediaStorage = $entityTypeManager->getStorage('media');
     $mediaStorage->resetCache();
     return count($mediaStorage->loadMultiple());
