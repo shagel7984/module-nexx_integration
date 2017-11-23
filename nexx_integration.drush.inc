@@ -6,7 +6,6 @@
  */
 
 use Drupal\Core\Entity\ContentEntityStorageBase;
-use Drupal\media\Entity\Media;
 
 /**
  * Implements hook_drush_commands().

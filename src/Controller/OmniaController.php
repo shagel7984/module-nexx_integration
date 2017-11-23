@@ -8,7 +8,6 @@ use Drupal\Core\Entity\EntityTypeBundleInfoInterface;
 use Drupal\Core\Database\Connection;
 use Drupal\Core\Utility\Token;
 use Drupal\media\MediaInterface;
-use Drupal\media\Entity\Media;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Request;
