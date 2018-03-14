@@ -98,7 +98,7 @@ class NexxVideoPlayer extends FormatterBase implements ContainerFactoryPluginInt
                   '#type' => 'html_tag',
                   '#tag' => 'script',
                   '#value' => '',
-                  '#attributes' => ['src' => '//require.nexx.cloud/' . $omnia_id, 'type' => 'text/javascript'],
+                  '#attributes' => ['src' => '//arc.nexx.cloud/sdk/' . $omnia_id . '.play', 'type' => 'text/javascript'],
                 ],
                 'nexx-cloud',
               ],
