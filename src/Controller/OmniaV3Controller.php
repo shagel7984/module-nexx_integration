@@ -9,7 +9,7 @@ use Drupal\Core\Database\Connection;
 use Drupal\Core\Utility\Token;
 use Drupal\media_entity\MediaInterface;
 use Drupal\media_entity\Entity\Media;
-use function GuzzleHttp\Psr7\str;
+use GuzzleHttp\Psr7\str;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Request;
