@@ -142,6 +142,13 @@ class SettingsForm extends ConfigFormBase {
       // we include this here to make it skip the form-level validator.
       '#validate' => [],
     ];
+
+    $form['notification_settings']['notification_api_version'] = [
+      '#type' => 'select',
+      '#title' => $this->t('NEXX notification API version'),
+      '#options' => [2 => 'APIv2', 3 => 'APIv3'],
+      '#default_value' => $settings->get('notification_api_version'),
+    ];
     $form['notification_settings']['info'][] = [
       '#markup' => '<p>' . $this->t('The current value to provide in omnia domain settings for the video endpoint is:<br><strong>:endpoint</strong>',
         [
@@ -181,6 +188,7 @@ class SettingsForm extends ConfigFormBase {
       ->set('nexx_api_authkey', $values['nexx_api_authkey'])
       ->set('omnia_id', $values['omnia_id'])
       ->set('notification_access_key', $values['notification_access_key'])
+      ->set('notification_api_version', $values['notification_api_version'])
       ->save();
   }
 
