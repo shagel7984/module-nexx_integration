@@ -92,12 +92,14 @@ class NexxNotification implements NexxNotificationInterface {
       throw new \InvalidArgumentException(sprintf('Streamtype cannot be "%s" in insert operation.', $streamtype));
     }
     $response = $this->notificateNexx($streamtype, $reference_number, 'insert', $values);
-    $this->logger->info("insert @type. Reference number: @reference, values: @values", [
-      '@type' => $streamtype,
-      '@reference' => $reference_number,
-      '@values' => print_r($values, TRUE),
-    ]
-    );
+    if ($response) {
+      $this->logger->info("insert @type. Reference number: @reference, values: @values", [
+        '@type' => $streamtype,
+        '@reference' => $reference_number,
+        '@values' => print_r($values, TRUE),
+      ]
+      );
+    }
     return $response;
   }
 
@@ -106,12 +108,14 @@ class NexxNotification implements NexxNotificationInterface {
    */
   public function update($streamtype, $reference_number, $values) {
     $response = $this->notificateNexx($streamtype, $reference_number, 'update', $values);
-    $this->logger->info("update @type. Reference number: @reference, values: @values", [
-      '@type' => $streamtype,
-      '@reference' => $reference_number,
-      '@values' => print_r($values, TRUE),
-    ]
-    );
+    if ($response) {
+      $this->logger->info("update @type. Reference number: @reference, values: @values", [
+        '@type' => $streamtype,
+        '@reference' => $reference_number,
+        '@values' => print_r($values, TRUE),
+      ]
+      );
+    }
     return $response;
   }
 
@@ -123,11 +127,13 @@ class NexxNotification implements NexxNotificationInterface {
       throw new \InvalidArgumentException(sprintf('Streamtype cannot be "%s" in delete operation.', $streamtype));
     }
     $response = $this->notificateNexx($streamtype, $reference_number, 'delete', $values);
-    $this->logger->info("delete @type. Reference number: @reference", [
-      '@type' => $streamtype,
-      '@reference' => $reference_number,
-    ]
-    );
+    if ($response) {
+      $this->logger->info("delete @type. Reference number: @reference", [
+        '@type' => $streamtype,
+        '@reference' => $reference_number,
+      ]
+      );
+    }
 
     return $response;
   }
@@ -152,7 +158,7 @@ class NexxNotification implements NexxNotificationInterface {
    * @param string[] $values
    *   The values to be set.
    *
-   * @return string[]
+   * @return string[]|false
    *   Decoded response.
    */
   protected function notificateNexx(
@@ -161,25 +167,27 @@ class NexxNotification implements NexxNotificationInterface {
     $command,
     array $values = []
   ) {
-    $api_url = $this->config->get('nexx_api_url');
+    $api_url = $this->config->get('nexx_api_url') . 'v3/' . $this->config->get('omnia_id') . '/manage/' . $streamtype . '/add/';
     $api_authkey = $this->config->get('nexx_api_authkey');
 
+    if ($api_url == '' || $api_authkey == '') {
+      $this->logger->error("Missing configuration for API Url and/or Installation Code (API Key)");
+      drupal_set_message(t("Item wasn't exported to Nexx due to missing configuration for API Url and/or Installation Code (API Key)."), 'error');
+
+      return FALSE;
+    }
+
     $response_data = [];
-    $data = [
-      'streamtype' => $streamtype,
-      'command' => $command,
-      'refnr' => $reference_number,
-      'authkey' => $api_authkey,
+    $headers = [
+      'X-Request-Token' => md5($streamtype . $this->config->get('omnia_id') . $this->config->get('api_secret')),
+      'X-Request-CID' => $api_authkey,
     ];
 
     if (isset($values)) {
-      $data += $values;
+      $headers += $values;
     }
 
     try {
-      $options = [
-        'form_params' => $data,
-      ];
       /*
       $this->logger->debug("Send http request to @url with option: @options",
       [
@@ -187,7 +195,7 @@ class NexxNotification implements NexxNotificationInterface {
       '@options' => print_r($options, TRUE),
       ]);
        */
-      $response = $this->httpClient->request('POST', $api_url, $options);
+      $response = $this->httpClient->request('POST', $api_url, ['headers' => $headers]);
       $response_data = Json::decode($response->getBody()->getContents());
 
       if ($response_data['state'] !== 'ok') {

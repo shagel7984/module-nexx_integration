@@ -107,6 +107,14 @@ class SettingsForm extends ConfigFormBase {
       '#default_value' => $omnia_id,
     ];
 
+    $api_secret = !empty($values['api_secret']) ? $values['api_secret'] : $settings->get('api_secret');
+    $form['notification_settings']['api_secret'] = [
+      '#type' => 'textfield',
+      '#title' => $this->t('API secret'),
+      '#description' => $this->t('API secret key, given by nexx.'),
+      '#default_value' => $api_secret,
+    ];
+
     // Add the embed type plugin settings.
     $form['type_settings'] = [
       '#type' => 'fieldset',
@@ -142,12 +150,11 @@ class SettingsForm extends ConfigFormBase {
       // we include this here to make it skip the form-level validator.
       '#validate' => [],
     ];
-
-    $form['notification_settings']['notification_api_version'] = [
+    $form['notification_settings']['nexx_api_version'] = [
       '#type' => 'select',
-      '#title' => $this->t('NEXX notification API version'),
+      '#title' => $this->t('NEXX API version'),
       '#options' => [2 => 'APIv2', 3 => 'APIv3'],
-      '#default_value' => $settings->get('notification_api_version'),
+      '#default_value' => $settings->get('nexx_api_version'),
     ];
     $form['notification_settings']['info'][] = [
       '#markup' => '<p>' . $this->t('The current value to provide in omnia domain settings for the video endpoint is:<br><strong>:endpoint</strong>',
@@ -187,8 +194,9 @@ class SettingsForm extends ConfigFormBase {
       ->set('nexx_api_url', $values['nexx_api_url'])
       ->set('nexx_api_authkey', $values['nexx_api_authkey'])
       ->set('omnia_id', $values['omnia_id'])
+      ->set('api_secret', $values['api_secret'])
       ->set('notification_access_key', $values['notification_access_key'])
-      ->set('notification_api_version', $values['notification_api_version'])
+      ->set('nexx_api_version', $values['nexx_api_version'])
       ->save();
   }
 

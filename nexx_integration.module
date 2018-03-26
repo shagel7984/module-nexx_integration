@@ -19,7 +19,7 @@ function nexx_integration_taxonomy_term_insert(EntityInterface $term) {
   if (!empty($response_data['item'])) {
     $drupal_id = $term->id();
     $nexx_id = $response_data['item'];
-    $vid = $term->bundle();
+    $vid = $term->get('vid')->getString();
 
     update_nexx_term_id_mapping($drupal_id, $nexx_id, $vid);
   }
@@ -40,16 +40,18 @@ function nexx_integration_taxonomy_term_update(EntityInterface $term) {
   else {
     $response_data = nexx_integration_taxonomy_term_request($term, 'update', ['item' => $nexx_id]);
 
-    // If omnia does not know the object yet, insert it.
-    if ($response_data['state'] === 'error' && $response_data['info'] === 'no object') {
-      $response_data = nexx_integration_taxonomy_term_request($term, 'insert');
-    }
-    if (!empty($response_data['item'])) {
-      $drupal_id = $term->id();
-      $nexx_id = $response_data['item'];
-      $vid = $term->bundle();
+    if ($response_data) {
+      // If omnia does not know the object yet, insert it.
+      if ($response_data['state'] === 'error' && $response_data['info'] === 'no object') {
+        $response_data = nexx_integration_taxonomy_term_request($term, 'insert');
+      }
+      if (!empty($response_data['item'])) {
+        $drupal_id = $term->id();
+        $nexx_id = $response_data['item'];
+        $vid = $term->get('vid')->getString();
 
-      update_nexx_term_id_mapping($drupal_id, $nexx_id, $vid);
+        update_nexx_term_id_mapping($drupal_id, $nexx_id, $vid);
+      }
     }
   }
 }
@@ -119,7 +121,7 @@ function nexx_integration_taxonomy_term_request(EntityInterface $term, $command,
        * Prepare for this by removing the hard coded names.
        */
       if (isset($channel_field_settings['target_bundles']) && in_array($term_bundle, $channel_field_settings['target_bundles'])) {
-        $streamtype = "channel";
+        $streamtype = "channels";
         $params = ['title' => $term->label()] + $additional_params;
 
         // Omnia knows the concept of parents for the channel taxonomy
@@ -132,11 +134,11 @@ function nexx_integration_taxonomy_term_request(EntityInterface $term, $command,
         }
       }
       elseif (isset($actors_field_settings['target_bundles']) && in_array($term_bundle, $actors_field_settings['target_bundles'])) {
-        $streamtype = "actor";
+        $streamtype = "actors";
         $params = ['artistname' => $term->label()] + $additional_params;
       }
       elseif (isset($tags_field_settings['target_bundles']) && in_array($term_bundle, $tags_field_settings['target_bundles'])) {
-        $streamtype = "tag";
+        $streamtype = "tags";
         $params = ['tag' => $term->label()] + $additional_params;
       }
       if (!empty($streamtype)) {
