@@ -167,12 +167,23 @@ class NexxNotification implements NexxNotificationInterface {
     $command,
     array $values = []
   ) {
-    $api_url = $this->config->get('nexx_api_url') . 'v3/' . $this->config->get('omnia_id') . '/manage/' . $streamtype . '/add/';
     $api_authkey = $this->config->get('nexx_api_authkey');
+    $omnia_id = $this->config->get('omnia_id');
 
-    if ($api_url == '' || $api_authkey == '') {
-      $this->logger->error("Missing configuration for API Url and/or Installation Code (API Key)");
-      drupal_set_message($this->t("Item wasn't exported to Nexx due to missing configuration for API Url and/or Installation Code (API Key)."), 'error');
+    $api_url = $this->config->get('nexx_api_url') . 'v3/' . $omnia_id . '/manage/' . $streamtype . '/';
+    if ($command == 'insert') {
+      $api_url .= 'add/';
+    }
+    elseif ($command == 'update') {
+      $api_url .= $values['item'] . '/update/';
+    }
+    elseif ($command == 'delete') {
+      $api_url .= $values['item'] . '/remove/';
+    }
+
+    if ($api_url == '' || $api_authkey == '' || $omnia_id == '') {
+      $this->logger->error("Missing configuration for API Url and/or Installation Code (API Key) and/or Omnia ID.");
+      drupal_set_message($this->t("Item wasn't exported to Nexx due to missing configuration for API Url and/or Installation Code (API Key) and/or Omnia ID."), 'error');
 
       return FALSE;
     }
@@ -184,21 +195,19 @@ class NexxNotification implements NexxNotificationInterface {
     ];
 
     if (isset($values)) {
-      $headers += $values;
+      $values['refnr'] = $reference_number;
     }
 
     try {
-      /*
-      $this->logger->debug("Send http request to @url with option: @options",
-      [
-      '@url' => $api_url,
-      '@options' => print_r($options, TRUE),
-      ]);
-       */
-      $response = $this->httpClient->request('POST', $api_url, ['headers' => $headers]);
+      $response = $this->httpClient->request('POST', $api_url,
+        [
+          'headers' => $headers,
+          'form_params' => $values,
+        ]
+      );
       $response_data = Json::decode($response->getBody()->getContents());
 
-      if ($response_data['state'] !== 'ok') {
+      if ($response_data['result']['message'] !== 'ok') {
         $this->logger->error("Omnia request failed: @error", [
           '@error' => $response_data['info'],
         ]
