@@ -485,12 +485,12 @@ class OmniaController extends ControllerBase {
    *
    * @param \Drupal\media_entity\MediaInterface $media
    *   The media entity.
-   * @param \string $teaserImageField
+   * @param mixed $teaserImageField
    *   The machine name of the field, that stores the file.
    *
    * @throws \Exception
    */
-  protected function mapTeaserImage(MediaInterface $media, string $teaserImageField) {
+  protected function mapTeaserImage(MediaInterface $media, $teaserImageField) {
     $images_field = $media->$teaserImageField;
     if (empty($images_field)) {
       return;
