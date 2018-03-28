@@ -31,7 +31,7 @@ class NexxIntegrationVideoTest extends BrowserTestBase {
 
     // Test connectivity.
     $videoData = $this->postVideoData($data);
-    $this->assertEquals($data->itemID, $videoData->refnr);
+    $this->assertEquals($data->itemData->general->ID, $videoData->refnr);
   }
 
   /**
@@ -47,27 +47,21 @@ class NexxIntegrationVideoTest extends BrowserTestBase {
 
     $this->assertEquals($videoEntity->label(), $videoField->title);
 
-    $this->assertEquals($data->itemData->itemID, $videoField->item_id);
-    $this->assertEquals($data->itemData->title, $videoField->title);
-    $this->assertEquals($data->itemData->hash, $videoField->hash);
-    $this->assertEquals($data->itemData->teaser, $videoField->teaser);
-    $this->assertEquals($data->itemData->uploaded, $videoField->uploaded);
-    $this->assertEquals($data->itemData->copyright, $videoField->copyright);
-    $this->assertEquals($data->itemData->encodedTHUMBS, $videoField->encodedTHUMBS);
-    $this->assertEquals($data->itemData->runtime, $videoField->runtime);
-    $this->assertEquals($data->itemStates->isSSC, $videoField->isSSC);
-    $this->assertEquals($data->itemStates->encodedSSC, $videoField->encodedSSC);
-    $this->assertEquals($data->itemStates->validfrom_ssc, $videoField->validfrom_ssc);
-    $this->assertEquals($data->itemStates->validto_ssc, $videoField->validto_ssc);
-    $this->assertEquals($data->itemStates->encodedHTML5, $videoField->encodedHTML5);
-    $this->assertEquals($data->itemStates->isMOBILE, $videoField->isMOBILE);
-    $this->assertEquals($data->itemStates->encodedMOBILE, $videoField->encodedMOBILE);
-    $this->assertEquals($data->itemStates->validfrom_mobile, $videoField->validfrom_mobile);
-    $this->assertEquals($data->itemStates->validto_mobile, $videoField->validto_mobile);
-    $this->assertEquals($data->itemStates->active, $videoField->active);
-    $this->assertEquals($data->itemStates->isDeleted, $videoField->isDeleted);
-    $this->assertEquals($data->itemStates->isBlocked, $videoField->isBlocked);
-    $this->assertEquals($data->itemStates->encodedTHUMBS, 1);
+    $this->assertEquals($data->itemData->general->ID, $videoField->item_id);
+    $this->assertEquals($data->itemData->general->title, $videoField->title);
+    $this->assertEquals($data->itemData->general->hash, $videoField->hash);
+    $this->assertEquals($data->itemData->general->teaser, $videoField->teaser);
+    $this->assertEquals($data->itemData->general->copyright, $videoField->copyright);
+    $this->assertEquals($data->itemData->general->runtime, $videoField->runtime);
+    $this->assertEquals($data->itemData->publishingdata->allowedOnDesktop, $videoField->isSSC);
+    $this->assertEquals($data->itemData->publishingdata->validFromDesktop, $videoField->validfrom_ssc);
+    $this->assertEquals($data->itemData->publishingdata->validUntilDesktop, $videoField->validto_ssc);
+    $this->assertEquals($data->itemData->publishingdata->allowedOnMobile, $videoField->isMOBILE);
+    $this->assertEquals($data->itemData->publishingdata->validFromMobile, $videoField->validfrom_mobile);
+    $this->assertEquals($data->itemData->publishingdata->validUntilMobile, $videoField->validto_mobile);
+    $this->assertEquals($data->itemData->publishingdata->isPublished, $videoField->active);
+    $this->assertEquals($data->itemData->publishingdata->isDeleted, $videoField->isDeleted);
+    $this->assertEquals($data->itemData->publishingdata->isBlocked, $videoField->isBlocked);
   }
 
   /**
@@ -77,7 +71,7 @@ class NexxIntegrationVideoTest extends BrowserTestBase {
     $id = 3;
     // Send active=0 now.
     $data = $this->getTestVideoData($id);
-    $data->itemStates->active = 0;
+    $data->itemData->publishingdata->isPublished = 0;
 
     $videoData = $this->postVideoData($data);
     $this->assertEquals($videoData->refnr, $id, "Video id is $id");
@@ -102,7 +96,7 @@ class NexxIntegrationVideoTest extends BrowserTestBase {
     );
 
     // Send active=0 now.
-    $data->itemStates->active = 0;
+    $data->itemData->publishingdata->isPublished = 0;
 
     $videoData = $this->postVideoData($data);
 
@@ -120,7 +114,7 @@ class NexxIntegrationVideoTest extends BrowserTestBase {
 
     $data = $this->getTestVideoData($id);
     // Send isSSC=0 now.
-    $data->itemStates->isSSC = 0;
+    $data->itemData->publishingdata->allowedOnDesktop = 0;
 
     $videoData = $this->postVideoData($data);
     $this->assertEquals($videoData->refnr, $id, "Video id is $id");
@@ -142,7 +136,7 @@ class NexxIntegrationVideoTest extends BrowserTestBase {
     $id should be status=1 because of isSSC=1.");
 
     // Send isSSC=0 now.
-    $data->itemStates->isSSC = 0;
+    $data->itemData->publishingdata->allowedOnDesktop = 0;
     $videoData = $this->postVideoData($data);
 
     $videoEntity = $this->loadVideoEntity($videoData->value);
@@ -158,7 +152,7 @@ class NexxIntegrationVideoTest extends BrowserTestBase {
     $count = $this->countVideos();
     $data = $this->getTestVideoData($id);
     // Send delete=1 now.
-    $data->itemStates->isDeleted = 1;
+    $data->itemData->publishingdata->isDeleted = 1;
 
     $videoData = $this->postVideoData($data);
     $this->assertEquals($videoData->refnr, $id, "Video id is $id");
@@ -184,7 +178,7 @@ class NexxIntegrationVideoTest extends BrowserTestBase {
 
     $data = $this->getTestVideoData($id);
     // Send delete=1 now.
-    $data->itemStates->isDeleted = 1;
+    $data->itemData->publishingdata->isDeleted = 1;
 
     $videoData = $this->postVideoData($data);
 
@@ -206,8 +200,8 @@ class NexxIntegrationVideoTest extends BrowserTestBase {
     // First create a new entity that should be created as an active entity
     // with activation date in the past and expire date in the futur.
     $data = $this->getTestVideoData($id);
-    $data->itemStates->validfrom_ssc = $pastDate;
-    $data->itemStates->validto_ssc = $futureDate;
+    $data->itemData->publishingdata->validFromDesktop = $pastDate;
+    $data->itemData->publishingdata->validUntilDesktop = $futureDate;
 
     $videoData = $this->postVideoData($data);
     $videoEntity = $this->loadVideoEntity($videoData->value);

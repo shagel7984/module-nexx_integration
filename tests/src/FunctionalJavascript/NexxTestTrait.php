@@ -139,35 +139,41 @@ trait NexxTestTrait {
     $channel = $this->mapOmniaTermId($this->terms['testChannel'][0]->id(), 'channel');
 
     $itemData = new \stdClass();
-    $itemData->itemID = $videoId;
-    $itemData->hash = "GL7ADZXZJ" . $videoId . "P";
-    $itemData->connector = "612";
-    $itemData->title = "Test Video $videoId";
-    $itemData->teaser = "The teaser text.";
-    $itemData->description = "The description text $videoId";
-    $itemData->uploaded = 1463997938;
-    $itemData->copyright = "Copyright notice";
-    $itemData->encodedTHUMBS = "1";
-    $itemData->thumb = "http://nx-i.akamaized.net/201605/G750452J1M6XAOWxL.jpg";
-    $itemData->runtime = "00:02:45";
-    $itemData->channel_id = $channel;
-    $itemData->actors_ids = implode(',', $actors);
-    $itemData->tags_ids = implode(',', $tags);
+    $itemData->general = new \stdClass();
+    $itemData->publishingdata = new \stdClass();
+    $itemData->imagedata = new \stdClass();
+    $itemData->channeldata = new \stdClass();
 
-    $itemStates = new \stdClass();
-    $itemStates->isSSC = 1;
-    $itemStates->encodedSSC = 1;
-    $itemStates->validfrom_ssc = 0;
-    $itemStates->validto_ssc = 0;
-    $itemStates->encodedHTML5 = 1;
-    $itemStates->isMOBILE = 1;
-    $itemStates->encodedMOBILE = 1;
-    $itemStates->validfrom_mobile = 0;
-    $itemStates->validto_mobile = 0;
-    $itemStates->active = 1;
-    $itemStates->isDeleted = 0;
-    $itemStates->isBlocked = 0;
-    $itemStates->encodedTHUMBS = 1;
+    $itemData->general->ID = $videoId;
+    $itemData->general->hash = "GL7ADZXZJ" . $videoId . "P";
+    $itemData->general->title = "Test Video $videoId";
+    $itemData->general->alttitle = "Test Video $videoId Second Title";
+    $itemData->general->subtitle = "Test Video $videoId SubTitle";
+    $itemData->general->teaser = "The teaser text.";
+    $itemData->general->description = "The description text $videoId";
+    $itemData->general->altdescription = "The alternative description text $videoId";
+    $itemData->general->uploaded = 1463997938;
+    $itemData->general->copyright = "Copyright notice";
+    $itemData->publishingdata->isEncoded = "1";
+    $itemData->imagedata->thumb = "http://nx-i.akamaized.net/201605/G750452J1M6XAOWxL.jpg";
+    $itemData->general->runtime = "00:02:45";
+    $itemData->channeldata->ID = $channel;
+    $itemData->general->actors_raw = implode(',', $actors);
+    $itemData->general->tags_raw = implode(',', $tags);
+
+    $itemData->publishingdata->allowedOnDesktop = 1;
+    $itemData->publishingdata->validFromDesktop = 0;
+    $itemData->publishingdata->validUntilDesktop = 0;
+    $itemData->publishingdata->allowedOnSmartTV = 1;
+    $itemData->publishingdata->validFromSmartTV = 0;
+    $itemData->publishingdata->validUntilSmartTV = 0;
+    $itemData->publishingdata->allowedOnMobile = 1;
+    $itemData->publishingdata->validFromMobile = 0;
+    $itemData->publishingdata->validUntilMobile = 0;
+    $itemData->publishingdata->isEncoded = 1;
+    $itemData->publishingdata->isPublished = 1;
+    $itemData->publishingdata->isDeleted = 0;
+    $itemData->publishingdata->isBlocked = 0;
 
     $baseData = new \stdClass();
     $baseData->itemID = $videoId;
@@ -180,7 +186,6 @@ trait NexxTestTrait {
     $baseData->triggeredInSession = "214653913620510632";
     $baseData->triggeredByUser = "119574";
     $baseData->itemData = $itemData;
-    $baseData->itemStates = $itemStates;
 
     return $baseData;
   }

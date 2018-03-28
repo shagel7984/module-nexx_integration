@@ -40,48 +40,33 @@ class NexxIntegrationJavascriptTest extends JavascriptTestBase {
 
     $this->assertEquals($videoEntity->label(), $videoField->title);
 
-    $this->assertEquals($data->itemData->itemID, $videoField->item_id);
-    $this->assertEquals($data->itemData->title, $videoField->title);
-    $this->assertEquals($data->itemData->hash, $videoField->hash);
-    $this->assertEquals($data->itemData->teaser, $videoField->teaser);
-    $this->assertEquals($data->itemData->uploaded, $videoField->uploaded);
-    $this->assertEquals($data->itemData->copyright, $videoField->copyright);
+    $this->assertEquals($data->itemData->general->ID, $videoField->item_id);
+    $this->assertEquals($data->itemData->general->title, $videoField->title);
+    $this->assertEquals($data->itemData->general->hash, $videoField->hash);
+    $this->assertEquals($data->itemData->general->teaser, $videoField->teaser);
+    $this->assertEquals($data->itemData->general->copyright, $videoField->copyright);
+    $this->assertEquals($data->itemData->general->runtime, $videoField->runtime);
+    $this->assertEquals($data->itemData->publishingdata->allowedOnDesktop, $videoField->isSSC);
     $this->assertEquals(
-      $data->itemData->encodedTHUMBS,
-      $videoField->encodedTHUMBS
-    );
-    $this->assertEquals($data->itemData->runtime, $videoField->runtime);
-    $this->assertEquals($data->itemStates->isSSC, $videoField->isSSC);
-    $this->assertEquals($data->itemStates->encodedSSC, $videoField->encodedSSC);
-    $this->assertEquals(
-      $data->itemStates->validfrom_ssc,
+      $data->itemData->publishingdata->validFromDesktop,
       $videoField->validfrom_ssc
     );
     $this->assertEquals(
-      $data->itemStates->validto_ssc,
+      $data->itemData->publishingdata->validUntilDesktop,
       $videoField->validto_ssc
     );
+    $this->assertEquals($data->itemData->publishingdata->allowedOnMobile, $videoField->isMOBILE);
     $this->assertEquals(
-      $data->itemStates->encodedHTML5,
-      $videoField->encodedHTML5
-    );
-    $this->assertEquals($data->itemStates->isMOBILE, $videoField->isMOBILE);
-    $this->assertEquals(
-      $data->itemStates->encodedMOBILE,
-      $videoField->encodedMOBILE
-    );
-    $this->assertEquals(
-      $data->itemStates->validfrom_mobile,
+      $data->itemData->publishingdata->validFromMobile,
       $videoField->validfrom_mobile
     );
     $this->assertEquals(
-      $data->itemStates->validto_mobile,
+      $data->itemData->publishingdata->validUntilMobile,
       $videoField->validto_mobile
     );
-    $this->assertEquals($data->itemStates->active, $videoField->active);
-    $this->assertEquals($data->itemStates->isDeleted, $videoField->isDeleted);
-    $this->assertEquals($data->itemStates->isBlocked, $videoField->isBlocked);
-    $this->assertEquals($data->itemStates->encodedTHUMBS, 1);
+    $this->assertEquals($data->itemData->publishingdata->isPublished, $videoField->active);
+    $this->assertEquals($data->itemData->publishingdata->isDeleted, $videoField->isDeleted);
+    $this->assertEquals($data->itemData->publishingdata->isBlocked, $videoField->isBlocked);
   }
 
 }

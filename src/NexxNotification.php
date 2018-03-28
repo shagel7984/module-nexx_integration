@@ -172,7 +172,7 @@ class NexxNotification implements NexxNotificationInterface {
 
     if ($api_url == '' || $api_authkey == '') {
       $this->logger->error("Missing configuration for API Url and/or Installation Code (API Key)");
-      drupal_set_message(t("Item wasn't exported to Nexx due to missing configuration for API Url and/or Installation Code (API Key)."), 'error');
+      drupal_set_message($this->t("Item wasn't exported to Nexx due to missing configuration for API Url and/or Installation Code (API Key)."), 'error');
 
       return FALSE;
     }
@@ -205,12 +205,11 @@ class NexxNotification implements NexxNotificationInterface {
         );
       }
       else {
-        $this->logger->info("Successful notification. Streamtype '@streamtype', command '@command', refnr '@refnr', values '@values' options @options", [
+        $this->logger->info("Successful notification. Streamtype '@streamtype', command '@command', refnr '@refnr', values '@values'", [
           '@streamtype' => $streamtype,
           '@command' => $command,
           '@refnr' => $reference_number,
           '@values' => print_r($values, TRUE),
-          '@options' => print_r($options, TRUE),
         ]
         );
       }
