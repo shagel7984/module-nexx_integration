@@ -9,13 +9,11 @@ use Drupal\Core\Database\Connection;
 use Drupal\Core\Utility\Token;
 use Drupal\media_entity\MediaInterface;
 use Drupal\media_entity\Entity\Media;
-use GuzzleHttp\Psr7\str;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
-use Drupal\Core\Entity\EntityTypeManagerInterface;
 
 /**
  * Class OmniaController.
@@ -91,7 +89,7 @@ class OmniaController extends ControllerBase {
    *
    * @var array
    */
-  protected $nexx_video_data = [];
+  protected $nexxVideoData = [];
 
   /**
    * OmniaController constructor.
@@ -106,8 +104,6 @@ class OmniaController extends ControllerBase {
    *   The logger service.
    * @param \Drupal\Core\Utility\Token $token
    *   Token service.
-   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_manager
-   *   Entity type manager.
    *
    * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException.
    */
@@ -226,7 +222,7 @@ class OmniaController extends ControllerBase {
    * Retrieves video bundle.
    *
    * @return string
-   *   TNexx video bundle.
+   *   Nexx video bundle.
    */
   protected function getVideoBundle() {
     return $this->config('nexx_integration.settings')
@@ -338,7 +334,7 @@ class OmniaController extends ControllerBase {
 
     // Create video.
     else {
-      $media = $mediaStorage->create(['bundle' => $this->getVideoBundle()]); //$this->mediaEntity();
+      $media = $mediaStorage->create(['bundle' => $this->getVideoBundle()]);
       $this->logger->info('Created video "@title" (Drupal id: @id)',
         [
           '@title' => (string) $this->videoData->itemData->general->title,
@@ -359,10 +355,10 @@ class OmniaController extends ControllerBase {
   }
 
   protected function prepareData() {
-    return $this->nexx_video_data = [
+    return $this->nexxVideoData = [
       'item_id' => $this->getVideoId(),
       'title' => (string) $this->videoData->itemData->general->title,
-      'hash' =>  (string) $this->videoData->itemData->general->hash,
+      'hash' => (string) $this->videoData->itemData->general->hash,
       'alttitle' => (string) $this->videoData->itemData->general->alttitle,
       'subtitle' => (string) $this->videoData->itemData->general->subtitle,
       'teaser' => (string) $this->videoData->itemData->general->teaser,
@@ -381,17 +377,17 @@ class OmniaController extends ControllerBase {
       'isSSC' => (int) $this->videoData->itemData->publishingdata->allowedOnDesktop,
       'validfrom_ssc' => (int) $this->videoData->itemData->publishingdata->validFromDesktop,
       'validto_ssc' => (int) $this->videoData->itemData->publishingdata->validUntilDesktop,
-      'encodedSSC' => (int) $this->videoData->itemData->publishingdata->isEncoded, // Need to be changed, because there is only one encoding phase now
+      'encodedSSC' => (int) $this->videoData->itemData->publishingdata->isEncoded, // Need to be changed, because there is only one encoding phase now.
 
       'isHYVE' => (int) $this->videoData->itemData->publishingdata->allowedOnSmartTV,
       'validfrom_hyve' => (int) $this->videoData->itemData->publishingdata->validFromSmartTV,
       'validto_hyve' => (int) $this->videoData->itemData->publishingdata->validUntilSmartTV,
-      'encodedHYVE' => (int) $this->videoData->itemData->publishingdata->isEncoded, // Need to be changed, because there is only one encoding phase now
+      'encodedHYVE' => (int) $this->videoData->itemData->publishingdata->isEncoded, // Need to be changed, because there is only one encoding phase now.
 
       'isMOBILE' => (int) $this->videoData->itemData->publishingdata->allowedOnMobile,
       'validfrom_mobile' => (int) $this->videoData->itemData->publishingdata->validFromMobile,
       'validto_mobile' => (int) $this->videoData->itemData->publishingdata->validUntilMobile,
-      'encodedMOBILE' => (int) $this->videoData->itemData->publishingdata->isEncoded, // Need to be changed, because there is only one encoding phase now
+      'encodedMOBILE' => (int) $this->videoData->itemData->publishingdata->isEncoded, // Need to be changed, because there is only one encoding phase now.
     ];
   }
 
@@ -406,13 +402,13 @@ class OmniaController extends ControllerBase {
     $videoField = $this->videoFieldName();
 
     $this->prepareData();
-    $media->set($videoField, $this->nexx_video_data);
+    $media->set($videoField, $this->nexxVideoData);
 
     //print_r($media->get($videoField)->getValue()[0]['runtime']);
     //die;
 
-    $actor_ids = explode(',', $this->nexx_video_data['actors_ids']);
-    $tag_ids = explode(',', $this->nexx_video_data['tags_ids']);
+    $actor_ids = explode(',', $this->nexxVideoData['actors_ids']);
+    $tag_ids = explode(',', $this->nexxVideoData['tags_ids']);
 
     /*
     $media->$videoField->encodedHTML5 = !empty($videoData->itemStates->encodedHTML5) ? $videoData->itemStates->encodedHTML5 : 0;
@@ -421,7 +417,7 @@ class OmniaController extends ControllerBase {
 
     // Copy title to label field.
     $labelKey = $entityType->getKey('label');
-    $media->$labelKey = $this->nexx_video_data['title'];
+    $media->$labelKey = $this->nexxVideoData['title'];
 
     $media_config = $media->getType()->getConfiguration();
 
@@ -439,20 +435,20 @@ class OmniaController extends ControllerBase {
 
     // Map the description.
     if (!empty($fields['description_field'])) {
-      $media->set($fields['description_field'], $this->nexx_video_data['description']);
+      $media->set($fields['description_field'], $this->nexxVideoData['description']);
     }
 
     // Update taxonomy references.
-    if (!empty($fields['channel_field']) && !empty($this->nexx_video_data['channel_id'])) {
-      $term_id = $this->mapTermId($this->nexx_video_data['channel_id'], 'channel');
+    if (!empty($fields['channel_field']) && !empty($this->nexxVideoData['channel_id'])) {
+      $term_id = $this->mapTermId($this->nexxVideoData['channel_id'], 'channel');
       if (!empty($term_id)) {
         $media->set($fields['channel_field'],  $term_id);
       }
       else {
         $this->logger->warning('Unknown ID @term_id for term "@term_name"',
           [
-            '@term_id' => $this->nexx_video_data['channel_id'],
-            '@term_name' => $this->nexx_video_data['title']
+            '@term_id' => $this->nexxVideoData['channel_id'],
+            '@term_name' => $this->nexxVideoData['title']
           ]
         );
       }
@@ -615,14 +611,14 @@ class OmniaController extends ControllerBase {
 
     $status = Media::NOT_PUBLISHED;
 
-    if ($this->nexx_video_data['active'] == 1
-      && $this->nexx_video_data['isSSC'] == 1
+    if ($this->nexxVideoData['active'] == 1
+      && $this->nexxVideoData['isSSC'] == 1
     ) {
       $status = Media::PUBLISHED;
 
       $this->logger->info('Published video "@title" (Drupal id: @id)',
         [
-          '@title' => $this->nexx_video_data['title'],
+          '@title' => $this->nexxVideoData['title'],
           '@id' => $media->id(),
         ]
       );
@@ -634,12 +630,12 @@ class OmniaController extends ControllerBase {
       validfrom_ssc:@validfrom_ssc 
       validto_ssc:@validto_ssc ',
         [
-          '@title' => $this->nexx_video_data['title'],
+          '@title' => $this->nexxVideoData['title'],
           '@id' => $media->id(),
-          '@active' => $this->nexx_video_data['active'],
-          '@isSSC' => $this->nexx_video_data['isSSC'],
-          '@validfrom_ssc' => $this->nexx_video_data['validfrom_ssc'],
-          '@validto_ssc' => $this->nexx_video_data['validto_ssc'],
+          '@active' => $this->nexxVideoData['active'],
+          '@isSSC' => $this->nexxVideoData['isSSC'],
+          '@validfrom_ssc' => $this->nexxVideoData['validfrom_ssc'],
+          '@validto_ssc' => $this->nexxVideoData['validto_ssc'],
         ]
       );
     }
