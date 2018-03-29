@@ -466,7 +466,8 @@ class OmniaController extends ControllerBase {
     if ($this->config('nexx_integration.settings')->get('bigger_thumbnail', 0)) {
       if ($this->videoData->itemData->imagedata->thumb_hasX3 == 1) {
         $thumb_uri = str_replace('xL', 'x3', $thumb_uri);
-      } elseif ($this->videoData->itemData->imagedata->thumb_hasX2 == 1) {
+      }
+      elseif ($this->videoData->itemData->imagedata->thumb_hasX2 == 1) {
         $thumb_uri = str_replace('xL', 'x2', $thumb_uri);
       }
     }
@@ -527,7 +528,8 @@ class OmniaController extends ControllerBase {
       if ($this->config('nexx_integration.settings')->get('bigger_thumbnail', 0)) {
         if ($this->videoData->itemData->imagedata->thumb_hasX3 == 1) {
           $thumb_uri = str_replace('xL', 'x3', $thumb_uri);
-        } elseif ($this->videoData->itemData->imagedata->thumb_hasX2 == 1) {
+        }
+        elseif ($this->videoData->itemData->imagedata->thumb_hasX2 == 1) {
           $thumb_uri = str_replace('xL', 'x2', $thumb_uri);
         }
       }
