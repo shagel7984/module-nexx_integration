@@ -115,6 +115,14 @@ class SettingsForm extends ConfigFormBase {
       '#default_value' => $api_secret,
     ];
 
+    $bigger_thumbnail = !empty($values['bigger_thumbnail']) ? $values['bigger_thumbnail'] : $settings->get('bigger_thumbnail');
+    $form['notification_settings']['bigger_thumbnail'] = [
+      '#type' => 'checkbox',
+      '#title' => $this->t('Allow bigger thumbnail'),
+      '#description' => $this->t('Allow to download bigger (x2, x3) thumbnail.'),
+      '#default_value' => $bigger_thumbnail,
+    ];
+
     // Add the embed type plugin settings.
     $form['type_settings'] = [
       '#type' => 'fieldset',
@@ -190,6 +198,7 @@ class SettingsForm extends ConfigFormBase {
       ->set('omnia_id', $values['omnia_id'])
       ->set('api_secret', $values['api_secret'])
       ->set('notification_access_key', $values['notification_access_key'])
+      ->set('bigger_thumbnail', $values['bigger_thumbnail'])
       ->save();
   }
 

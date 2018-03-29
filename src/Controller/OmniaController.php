@@ -462,9 +462,18 @@ class OmniaController extends ControllerBase {
       $media->set($fields['tag_field'], $mapped_tag_ids);
     }
 
+    $thumb_uri = $this->videoData->itemData->imagedata->thumb;
+    if ($this->config('nexx_integration.settings')->get('bigger_thumbnail', 0)) {
+      if ($this->videoData->itemData->imagedata->thumb_hasX3 == 1) {
+        $thumb_uri = str_replace('xL', 'x3', $thumb_uri);
+      } elseif ($this->videoData->itemData->imagedata->thumb_hasX2 == 1) {
+        $thumb_uri = str_replace('xL', 'x2', $thumb_uri);
+      }
+    }
+
     if (!empty($fields['teaser_image_field']) && $media->$videoField->thumb !== $this->videoData->itemData->imagedata->thumb) {
-      if (!empty($this->videoData->itemData->imagedata->thumb)) {
-        $media->$videoField->thumb = $this->videoData->itemData->imagedata->thumb;
+      if (!empty($thumb_uri)) {
+        $media->$videoField->thumb = $thumb_uri;
         $this->mapTeaserImage($media, $fields['teaser_image_field']);
       }
       else {
@@ -515,6 +524,14 @@ class OmniaController extends ControllerBase {
     $updated_thumbnail_entity = FALSE;
 
     if ($thumb_uri = $this->videoData->itemData->imagedata->thumb) {
+      if ($this->config('nexx_integration.settings')->get('bigger_thumbnail', 0)) {
+        if ($this->videoData->itemData->imagedata->thumb_hasX3 == 1) {
+          $thumb_uri = str_replace('xL', 'x3', $thumb_uri);
+        } elseif ($this->videoData->itemData->imagedata->thumb_hasX2 == 1) {
+          $thumb_uri = str_replace('xL', 'x2', $thumb_uri);
+        }
+      }
+
       // Get configured source field from media entity type definition.
       $thumbnail_upload_field = $thumbnail_entity->getType()
         ->getConfiguration()['source_field'];
