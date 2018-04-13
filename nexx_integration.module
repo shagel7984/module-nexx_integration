@@ -16,10 +16,10 @@ use Drupal\media_entity\Entity\Media;
 function nexx_integration_taxonomy_term_insert(EntityInterface $term) {
   $response_data = nexx_integration_taxonomy_term_request($term, 'insert');
 
-  if (!empty($response_data['result'])) {
+  if (!empty($response_data['result']['itemupdate']['generatedID'])) {
     $drupal_id = $term->id();
     $nexx_id = $response_data['result']['itemupdate']['generatedID'];
-    $vid = $term->get('vid')->getString();
+    $vid = $term->bundle();
 
     update_nexx_term_id_mapping($drupal_id, $nexx_id, $vid);
   }
@@ -42,10 +42,10 @@ function nexx_integration_taxonomy_term_update(EntityInterface $term) {
 
     if ($response_data) {
       // If omnia does not know the object yet, insert it.
-      if ($response_data['metadata']['status'] == 403) {
+      if (!empty($response_data['metadata']['status']) && $response_data['metadata']['status'] == 403) {
         $response_data = nexx_integration_taxonomy_term_request($term, 'insert');
 
-        if (!empty($response_data['result'])) {
+        if (!empty($response_data['result']['itemupdate']['generatedID'])) {
           $drupal_id = $term->id();
           $nexx_id = $response_data['result']['itemupdate']['generatedID'];
           $vid = $term->get('vid')->getString();

@@ -14,6 +14,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
+use Symfony\Component\HttpKernel\Exception\ServiceUnavailableHttpException;
 
 /**
  * Class OmniaController.
@@ -276,7 +277,12 @@ class OmniaController extends ControllerBase {
     $content = $request->getContent();
     $this->videoData = json_decode($content);
 
+    if (!is_object($this->videoData)) {
+      throw new ServiceUnavailableHttpException();
+    }
+
     if (!$this->getVideoId()) {
+      throw new ServiceUnavailableHttpException();
       throw new \Exception('ItemID missing');
     }
 
