@@ -283,7 +283,6 @@ class OmniaController extends ControllerBase {
 
     if (!$this->getVideoId()) {
       throw new ServiceUnavailableHttpException();
-      throw new \Exception('ItemID missing');
     }
 
     $this->logger->info('Incoming video "@title" (nexx id: @id)',
