@@ -265,3 +265,20 @@ function nexx_integration_cron() {
     );
   }
 }
+
+/**
+ * Implements hook_library_info_alter().
+ */
+function nexx_integration_library_info_alter(&$libraries, $extension) {
+  // Add dynamic nexxPLAY library script to nexx_integration/base library.
+  if ($extension === 'nexx_integration' && isset($libraries['base'])) {
+    $omnia_id = \Drupal::config('nexx_integration.settings')
+      ->get('omnia_id');
+
+    if ($omnia_id) {
+      $libraries['base']['js']['//arc.nexx.cloud/sdk/' . $omnia_id . '.play'] = [
+        'type' => 'external',
+      ];
+    }
+  }
+}
