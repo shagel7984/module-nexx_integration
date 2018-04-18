@@ -186,13 +186,11 @@ class OmniaController extends ControllerBase {
     $token = $request->query->get('token', NULL);
 
     if ($token === NULL) {
-      $this->logger->error('Missing token in request');
       throw new AccessDeniedHttpException();
     }
 
     $config = $this->config('nexx_integration.settings');
     if ($token != $config->get('notification_access_key')) {
-      $this->logger->error('Wrong token in request');
       throw new AccessDeniedHttpException();
     }
 
@@ -206,7 +204,7 @@ class OmniaController extends ControllerBase {
    *   Nexx Id of video.
    */
   protected function getVideoId() {
-    return $this->videoData->itemData->general->ID;
+    return !empty($this->videoData->itemData->general->ID) ? $this->videoData->itemData->general->ID : 0;
   }
 
   /**
@@ -216,7 +214,7 @@ class OmniaController extends ControllerBase {
    *   Is video deleted.
    */
   protected function isVideoDeleted() {
-    return (bool) $this->videoData->itemData->publishingdata->isDeleted;
+    return !empty($this->videoData->itemData->publishingdata->isDeleted) ? (bool) $this->videoData->itemData->publishingdata->isDeleted : 0;
   }
 
   /**
@@ -287,7 +285,7 @@ class OmniaController extends ControllerBase {
 
     $this->logger->info('Incoming video "@title" (nexx id: @id)',
       [
-        '@title' => (string) $this->videoData->itemData->general->title,
+        '@title' => !empty($this->videoData->itemData->general->title) ? (string) $this->videoData->itemData->general->title : '',
         '@id' => $this->getVideoId(),
       ]
     );
@@ -310,7 +308,7 @@ class OmniaController extends ControllerBase {
         $media->delete();
         $this->logger->info('Deleted video "@title" (Drupal id: @id)',
           [
-            '@title' => (string) $this->videoData->itemData->general->title,
+            '@title' => !empty($this->videoData->itemData->general->title) ? (string) $this->videoData->itemData->general->title : '',
             '@id' => $id,
           ]
         );
@@ -332,7 +330,7 @@ class OmniaController extends ControllerBase {
       $media = $mediaStorage->load($id);
       $this->logger->info('Updated video "@title" (Drupal id: @id)',
         [
-          '@title' => (string) $this->videoData->itemData->general->title,
+          '@title' => !empty($this->videoData->itemData->general->title) ? (string) $this->videoData->itemData->general->title : '',
           '@id' => $id,
         ]
       );
@@ -343,7 +341,7 @@ class OmniaController extends ControllerBase {
       $media = $mediaStorage->create(['bundle' => $this->getVideoBundle()]);
       $this->logger->info('Created video "@title" (Drupal id: @id)',
         [
-          '@title' => (string) $this->videoData->itemData->general->title,
+          '@title' => !empty($this->videoData->itemData->general->title) ? (string) $this->videoData->itemData->general->title : '',
           '@id' => $media->uuid(),
         ]
       );
@@ -366,37 +364,37 @@ class OmniaController extends ControllerBase {
   protected function prepareData() {
     return $this->nexxVideoData = [
       'item_id' => $this->getVideoId(),
-      'title' => (string) $this->videoData->itemData->general->title,
-      'hash' => (string) $this->videoData->itemData->general->hash,
-      'alttitle' => (string) $this->videoData->itemData->general->alttitle,
-      'subtitle' => (string) $this->videoData->itemData->general->subtitle,
-      'teaser' => (string) $this->videoData->itemData->general->teaser,
-      'description' => substr($this->videoData->itemData->general->description, 0, 256),
-      'altdescription' => substr($this->videoData->itemData->general->altdescription, 0, 256),
-      'copyright' => (string) $this->videoData->itemData->general->copyright,
-      'actors_ids' => (string) $this->videoData->itemData->general->actors_raw,
-      'tags_ids' => (string) $this->videoData->itemData->general->tags_raw,
-      'channel_id' => (int) $this->videoData->itemData->channeldata->ID,
+      'title' => !empty($this->videoData->itemData->general->title) ? (string) $this->videoData->itemData->general->title : '',
+      'hash' => !empty($this->videoData->itemData->general->hash) ? (string) $this->videoData->itemData->general->hash : '',
+      'alttitle' => !empty($this->videoData->itemData->general->alttitle) ? (string) $this->videoData->itemData->general->alttitle : '',
+      'subtitle' => !empty($this->videoData->itemData->general->subtitle) ? (string) $this->videoData->itemData->general->subtitle : '',
+      'teaser' => !empty($this->videoData->itemData->general->teaser) ? (string) $this->videoData->itemData->general->teaser : '',
+      'description' => substr(!empty($this->videoData->itemData->general->description) ? $this->videoData->itemData->general->description : '', 0, 256),
+      'altdescription' => substr(!empty($this->videoData->itemData->general->altdescription) ? $this->videoData->itemData->general->altdescription : '', 0, 256),
+      'copyright' => !empty($this->videoData->itemData->general->copyright) ? (string) $this->videoData->itemData->general->copyright : '',
+      'actors_ids' => !empty($this->videoData->itemData->general->actors_raw) ? (string) $this->videoData->itemData->general->actors_raw : '',
+      'tags_ids' => !empty($this->videoData->itemData->general->tags_raw) ? (string) $this->videoData->itemData->general->tags_raw : '',
+      'channel_id' => !empty($this->videoData->itemData->channeldata->ID) ? (int) $this->videoData->itemData->channeldata->ID : 0,
       'upload' => !empty($this->videoData->itemData->general->uploaded) ? $this->videoData->itemData->general->uploaded : NULL,
-      'active' => (int) $this->videoData->itemData->publishingdata->isPublished,
-      'isDeleted' => (int) $this->videoData->itemData->publishingdata->isDeleted,
-      'isBlocked' => (int) $this->videoData->itemData->publishingdata->isBlocked,
-      'runtime' => (string) $this->videoData->itemData->general->runtime,
+      'active' => !empty($this->videoData->itemData->publishingdata->isPublished) ? (int) $this->videoData->itemData->publishingdata->isPublished : 0,
+      'isDeleted' => !empty($this->videoData->itemData->publishingdata->isDeleted) ? (int) $this->videoData->itemData->publishingdata->isDeleted : 0,
+      'isBlocked' => !empty($this->videoData->itemData->publishingdata->isBlocked) ? (int) $this->videoData->itemData->publishingdata->isBlocked : 0,
+      'runtime' => !empty($this->videoData->itemData->general->runtime) ? (string) $this->videoData->itemData->general->runtime : '00:00:00',
 
-      'isSSC' => (int) $this->videoData->itemData->publishingdata->allowedOnDesktop,
-      'validfrom_ssc' => (int) $this->videoData->itemData->publishingdata->validFromDesktop,
-      'validto_ssc' => (int) $this->videoData->itemData->publishingdata->validUntilDesktop,
-      'encodedSSC' => (int) $this->videoData->itemData->publishingdata->isEncoded,
+      'isSSC' => !empty($this->videoData->itemData->publishingdata->allowedOnDesktop) ? (int) $this->videoData->itemData->publishingdata->allowedOnDesktop : 0,
+      'validfrom_ssc' => !empty($this->videoData->itemData->publishingdata->validFromDesktop) ? (int) $this->videoData->itemData->publishingdata->validFromDesktop : 0,
+      'validto_ssc' => !empty($this->videoData->itemData->publishingdata->validUntilDesktop) ? (int) $this->videoData->itemData->publishingdata->validUntilDesktop : 0,
+      'encodedSSC' => !empty($this->videoData->itemData->publishingdata->isEncoded) ? (int) $this->videoData->itemData->publishingdata->isEncoded : 0,
 
-      'isHYVE' => (int) $this->videoData->itemData->publishingdata->allowedOnSmartTV,
-      'validfrom_hyve' => (int) $this->videoData->itemData->publishingdata->validFromSmartTV,
-      'validto_hyve' => (int) $this->videoData->itemData->publishingdata->validUntilSmartTV,
-      'encodedHYVE' => (int) $this->videoData->itemData->publishingdata->isEncoded,
+      'isHYVE' => !empty($this->videoData->itemData->publishingdata->allowedOnSmartTV) ? (int) $this->videoData->itemData->publishingdata->allowedOnSmartTV : 0,
+      'validfrom_hyve' => !empty($this->videoData->itemData->publishingdata->validFromSmartTV) ? (int) $this->videoData->itemData->publishingdata->validFromSmartTV : 0,
+      'validto_hyve' => !empty($this->videoData->itemData->publishingdata->validUntilSmartTV) ? (int) $this->videoData->itemData->publishingdata->validUntilSmartTV : 0,
+      'encodedHYVE' => !empty($this->videoData->itemData->publishingdata->validUntilSmartTV) ? (int) $this->videoData->itemData->publishingdata->validUntilSmartTV : 0,
 
-      'isMOBILE' => (int) $this->videoData->itemData->publishingdata->allowedOnMobile,
-      'validfrom_mobile' => (int) $this->videoData->itemData->publishingdata->validFromMobile,
-      'validto_mobile' => (int) $this->videoData->itemData->publishingdata->validUntilMobile,
-      'encodedMOBILE' => (int) $this->videoData->itemData->publishingdata->isEncoded,
+      'isMOBILE' => !empty($this->videoData->itemData->publishingdata->allowedOnMobile) ? (int) $this->videoData->itemData->publishingdata->allowedOnMobile : 0,
+      'validfrom_mobile' => !empty($this->videoData->itemData->publishingdata->validFromMobile) ? (int) $this->videoData->itemData->publishingdata->validFromMobile : 0,
+      'validto_mobile' => !empty($this->videoData->itemData->publishingdata->validUntilMobile) ? (int) $this->videoData->itemData->publishingdata->validUntilMobile : 0,
+      'encodedMOBILE' => !empty($this->videoData->itemData->publishingdata->isEncoded) ? (int) $this->videoData->itemData->publishingdata->isEncoded : 0,
     ];
   }
 
@@ -467,7 +465,7 @@ class OmniaController extends ControllerBase {
       $media->set($fields['tag_field'], $mapped_tag_ids);
     }
 
-    $thumb_uri = $this->videoData->itemData->imagedata->thumb;
+    $thumb_uri = !empty($this->videoData->itemData->imagedata->thumb) ? $this->videoData->itemData->imagedata->thumb : '';
     if ($this->config('nexx_integration.settings')->get('bigger_thumbnail', 0)) {
       if ($this->videoData->itemData->imagedata->thumb_hasX3 == 1) {
         $thumb_uri = str_replace('xL', 'x3', $thumb_uri);
