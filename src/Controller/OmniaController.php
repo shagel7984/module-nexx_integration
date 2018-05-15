@@ -389,7 +389,7 @@ class OmniaController extends ControllerBase {
       'isHYVE' => !empty($this->videoData->itemData->publishingdata->allowedOnSmartTV) ? (int) $this->videoData->itemData->publishingdata->allowedOnSmartTV : 0,
       'validfrom_hyve' => !empty($this->videoData->itemData->publishingdata->validFromSmartTV) ? (int) $this->videoData->itemData->publishingdata->validFromSmartTV : 0,
       'validto_hyve' => !empty($this->videoData->itemData->publishingdata->validUntilSmartTV) ? (int) $this->videoData->itemData->publishingdata->validUntilSmartTV : 0,
-      'encodedHYVE' => !empty($this->videoData->itemData->publishingdata->validUntilSmartTV) ? (int) $this->videoData->itemData->publishingdata->validUntilSmartTV : 0,
+      'encodedHYVE' => !empty($this->videoData->itemData->publishingdata->isEncoded) ? (int) $this->videoData->itemData->publishingdata->isEncoded : 0,
 
       'isMOBILE' => !empty($this->videoData->itemData->publishingdata->allowedOnMobile) ? (int) $this->videoData->itemData->publishingdata->allowedOnMobile : 0,
       'validfrom_mobile' => !empty($this->videoData->itemData->publishingdata->validFromMobile) ? (int) $this->videoData->itemData->publishingdata->validFromMobile : 0,
