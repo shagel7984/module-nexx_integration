@@ -3,12 +3,12 @@
 namespace Drupal\nexx_integration;
 
 use Drupal\Core\Config\ConfigFactoryInterface;
-use Drupal\Core\Entity\EntityTypeManagerInterface;
-use Drupal\Core\Entity\Query\QueryFactory;
 use Drupal\Core\Logger\LoggerChannelFactoryInterface;
 use Drupal\Component\Serialization\Json;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
+use Drupal\Core\StringTranslation\TranslationInterface;
+use Drupal\Core\StringTranslation\StringTranslationTrait;
 
 /**
  * Class NexxNotification.
@@ -17,19 +17,7 @@ use GuzzleHttp\Exception\RequestException;
  */
 class NexxNotification implements NexxNotificationInterface {
 
-  /**
-   * The entity storage object for taxonomy terms.
-   *
-   * @var \Drupal\Core\Entity\EntityStorageInterface
-   */
-  protected $termStorage;
-
-  /**
-   * The entity query object for taxonomy terms.
-   *
-   * @var \Drupal\Core\Entity\Query\QueryInterface
-   */
-  protected $nodeQuery;
+  use StringTranslationTrait;
 
   /**
    * The config factory service.
@@ -57,31 +45,26 @@ class NexxNotification implements NexxNotificationInterface {
    *
    * Notify when channel or actor terms have been updated,
    * or when a video has been created.
-   * TODO: entity type manager and node query are not used anymore, remove them.
    *
-   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
-   *   The entity type manager.
-   * @param \Drupal\Core\Entity\Query\QueryFactory $query
-   *   The entity query object for taxonomy terms.
    * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
    *   The config factory service.
    * @param \Drupal\Core\Logger\LoggerChannelFactoryInterface $logger_factory
    *   The config factory service.
    * @param \GuzzleHttp\Client $http_client
    *   The HTTP client.
+   * @param \Drupal\Core\StringTranslation\TranslationInterface $translation
+   *   The translation service.
    */
   public function __construct(
-    EntityTypeManagerInterface $entity_type_manager,
-    QueryFactory $query,
     ConfigFactoryInterface $config_factory,
     LoggerChannelFactoryInterface $logger_factory,
-    Client $http_client
+    Client $http_client,
+    TranslationInterface $translation
   ) {
-    $this->termStorage = $entity_type_manager->getStorage('taxonomy_term');
-    $this->nodeQuery = $query->get('node');
     $this->config = $config_factory->get('nexx_integration.settings');
     $this->logger = $logger_factory->get('nexx_integration');
     $this->httpClient = $http_client;
+    $this->stringTranslation = $translation;
   }
 
   /**

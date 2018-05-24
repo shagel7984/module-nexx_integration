@@ -605,6 +605,10 @@ class OmniaController extends ControllerBase {
   protected function mapMultipleTermIds(array $omnia_ids, $vid) {
     $drupal_ids = [];
     foreach ($omnia_ids as $omnia_id) {
+      if (empty($omnia_id)) {
+        continue;
+      }
+
       $drupalId = $this->mapTermId($omnia_id, $vid);
       if ($drupalId) {
         $drupal_ids[] = $drupalId;
