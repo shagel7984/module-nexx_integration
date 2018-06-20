@@ -22,11 +22,14 @@
      * @prop {boolean} apiIsReady
      * @prop {boolean} autoPlay
      * @prop {string} containerId
+     * @prop {boolean} disableAds
+     * @prop {string} exitMode
      * @prop {boolean} isPaused
      * @prop {boolean} isVisible
      * @prop {number} playerIndex
      * @prop {boolean} playerIsReady
      * @prop {string|null} state
+     * @prop {string} streamType
      * @prop {string|null} videoId
      */
     defaults: /** @lends Drupal.nexxPLAY.PlayerModel# */{
@@ -47,6 +50,16 @@
        * The HTML ID of the video container.
        */
       containerId: '',
+
+      /**
+       * Disable all Ad Types in this Player.
+       */
+      disableAds: 0,
+
+      /**
+       * The exitMode (loop, replay, load, navigate). Empty string equals to Omnia default.
+       */
+      exitMode: '',
 
       /**
        * Player is paused?
@@ -76,6 +89,11 @@
        * @param {string|null}
        */
       state: null,
+
+      /**
+       * @prop {string} streamType
+       */
+      streamType: 'video',
 
       /**
        * The video ID.

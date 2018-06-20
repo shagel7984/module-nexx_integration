@@ -375,7 +375,7 @@ class OmniaController extends ControllerBase {
       'actors_ids' => !empty($this->videoData->itemData->general->actors_raw) ? (string) $this->videoData->itemData->general->actors_raw : '',
       'tags_ids' => !empty($this->videoData->itemData->general->tags_raw) ? (string) $this->videoData->itemData->general->tags_raw : '',
       'channel_id' => !empty($this->videoData->itemData->channeldata->ID) ? (int) $this->videoData->itemData->channeldata->ID : 0,
-      'upload' => !empty($this->videoData->itemData->general->uploaded) ? $this->videoData->itemData->general->uploaded : NULL,
+      'uploaded' => !empty($this->videoData->itemData->general->uploaded) ? $this->videoData->itemData->general->uploaded : NULL,
       'active' => !empty($this->videoData->itemData->publishingdata->isPublished) ? (int) $this->videoData->itemData->publishingdata->isPublished : 0,
       'isDeleted' => !empty($this->videoData->itemData->publishingdata->isDeleted) ? (int) $this->videoData->itemData->publishingdata->isDeleted : 0,
       'isBlocked' => !empty($this->videoData->itemData->publishingdata->isBlocked) ? (int) $this->videoData->itemData->publishingdata->isBlocked : 0,

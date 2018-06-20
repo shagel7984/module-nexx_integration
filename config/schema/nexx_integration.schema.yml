@@ -126,3 +126,20 @@ field.value.nexx_video_data:
     runtime: 
       type: string 
       label: 'Runtime'
+
+field.formatter.settings.nexx_video_player:
+  type: mapping
+  label: 'Nexx Video Player formatter settings'
+  mapping:
+    autoPlay:
+      type: string
+      label: 'autoPlay'
+    exitMode:
+      type: string
+      label: 'exitMode'
+    disableAds:
+      type: string
+      label: 'disableAds'
+    streamType:
+      type: string
+      label: 'streamType'
