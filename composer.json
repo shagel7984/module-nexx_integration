@@ -4,6 +4,10 @@
   "description": "Nexx Omnia and player Integration",
   "license": "GPL-2.0-or-later",
   "minimum-stability": "dev",
+  "require": {
+    "drupal/media_entity": "~1.0",
+    "drupal/token": "~1.0"
+  },
   "require-dev": {
     "burdamagazinorg/thunder-dev-tools": "dev-master"
   }
