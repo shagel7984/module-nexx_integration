@@ -232,6 +232,30 @@ class NexxIntegrationVideoTest extends BrowserTestBase {
   }
 
   /**
+   * Test the video entity 9: test deleted trigger.
+   */
+  public function testDeletedVideoTrigger() {
+    $id = 10;
+
+    // Send delete=0 now.
+    $data = $this->getTestVideoData($id);
+    $videoData = $this->postVideoData($data);
+
+    $videoEntity = $this->loadVideoEntity($videoData->value);
+    $this->assertEquals($videoEntity->get("status")->getString(), 1, "Video id
+    $id should be status=1 before deletion.");
+    $count = $this->countVideos();
+
+    $data = $this->getTestVideoDeleteData($id);
+    $videoData = $this->postVideoData($data);
+
+    $videoEntity = $this->loadVideoEntity($videoData->value);
+    $this->assertNull($videoEntity, "Video id $id should be deleted.");
+    $this->assertEquals($count - 1, $this->countVideos(), "Counting all videos 
+    after deletion. Video id $id should be deleted.");
+  }
+
+  /**
    * Test the created video entity.
    */
   public function testMappedFields() {
