@@ -191,6 +191,32 @@ trait NexxTestTrait {
   }
 
   /**
+   * Create test data delete string.
+   *
+   * @param int $videoId
+   *   Setup video ID.
+   *
+   * @return \stdClass
+   *   Test video data object
+   */
+  protected function getTestVideoDeleteData($videoId) {
+    $baseData = new \stdClass();
+    $baseData->itemID = $videoId;
+    $baseData->itemReference = "";
+    $baseData->itemMime = "video";
+    $baseData->itemstreamtype = 'video';
+    $baseData->clientID = "1";
+    $baseData->triggerReason = "delete";
+    $baseData->triggerTime = "1465392767";
+    $baseData->sendingTime = 1465392783;
+    $baseData->triggeredInSession = "214653913620510632";
+    $baseData->triggeredByUser = "119574";
+    $baseData->itemData = NULL;
+
+    return $baseData;
+  }
+
+  /**
    * Load a video media entity.
    *
    * @param int $videoId

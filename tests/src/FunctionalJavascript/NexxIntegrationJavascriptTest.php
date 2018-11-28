@@ -2,14 +2,14 @@
 
 namespace Drupal\Tests\nexx_integration\FunctionalJavascript;
 
-use Drupal\FunctionalJavascriptTests\JavascriptTestBase;
+use Drupal\FunctionalJavascriptTests\WebDriverTestBase;
 
 /**
  * Tests the JavaScript functionality of the block add filter.
  *
  * @group nexx_integration
  */
-class NexxIntegrationJavascriptTest extends JavascriptTestBase {
+class NexxIntegrationJavascriptTest extends WebDriverTestBase {
 
   use NexxTestTrait;
 

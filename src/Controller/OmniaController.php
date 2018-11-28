@@ -204,7 +204,17 @@ class OmniaController extends ControllerBase {
    *   Nexx Id of video.
    */
   protected function getVideoId() {
-    return !empty($this->videoData->itemData->general->ID) ? $this->videoData->itemData->general->ID : 0;
+    return !empty($this->videoData->itemID) ? $this->videoData->itemID : 0;
+  }
+
+  /**
+   * Return Nexx API trigger reason.
+   *
+   * @return null|string
+   *   Nexx API trigger reason.
+   */
+  protected function getTriggerReason() {
+    return !empty($this->videoData->triggerReason) ? (string) $this->videoData->triggerReason : '';
   }
 
   /**
@@ -302,13 +312,13 @@ class OmniaController extends ControllerBase {
 
     $response = new JsonResponse();
     // Delete video if incomming isDeleted is 1.
-    if ($this->isVideoDeleted()) {
+    if ($this->getTriggerReason() == 'delete' || $this->isVideoDeleted()) {
       if ($id = array_pop($ids)) {
         $media = $mediaStorage->load($id);
         $media->delete();
         $this->logger->info('Deleted video "@title" (Drupal id: @id)',
           [
-            '@title' => !empty($this->videoData->itemData->general->title) ? (string) $this->videoData->itemData->general->title : '',
+            '@title' => $media->label(),
             '@id' => $id,
           ]
         );
